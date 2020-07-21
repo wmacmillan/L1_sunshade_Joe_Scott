@@ -1,0 +1,58 @@
+---
+title: "L1 Sun Block Area"
+author: "Joe Scott and William MacMillan"
+date: "7/21/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen=999)
+```
+
+# Introduction
+
+A potential method for controlling the global average temperature of Earth is blocking a percentage of solar energy. A number of proposals for terraforming Earth consider controlling the energy budget of the planet through reflecting sunlight in a variety of ways. One candidate is to place a number of solar shades at the first Lagrange point (L1) between Earth and the Sun. This document gives the calculations for the area necessary for blocking a percentage of the inbound solar radiation.
+
+## Angular Diameter Method
+
+One method for determining the size of an disc in space at an arbitrary distance is to use the angular diameter of the object. Angular diameter is the size of the arc (in degrees or radians) of a circle viewed perpendicular at a distance from an observer. From the perspective of an observer at Earth, the Sun is a disc of an apparent diameter, with the size of the disc being relative to your location between the two bodies.
+
+The formula for angular diameter, in degrees, is
+
+\[ \delta = 2\arctan \left( \frac{d}{2D} \right) \]
+
+where $\delta$ is the observed arc in degrees, $d$ is the diameter of the object in units of absolute length, and $D$ is the distance to the object. Inverting this function to find $d$, the equation becomes
+
+\[ d = 2 D \tan \left( \frac{\delta}{2} \right) \]
+
+The angular diameter of the Sun is generally given as approximately .5334 degrees. The L1 point is roughly 1.5 million kilometers from Earth. Inserting these values into our equation for real diameter, we get, in R code
+
+```{r}
+# Note, all R trig functions are in radians
+deg2rad <- function(deg) {(deg * pi) / (180)}
+
+delta = .5334
+D = 1500000
+sun_in_rad <- deg2rad(delta)
+
+d<-2*tan(sun_in_rad/2)*D
+```
+
+```{r, echo=FALSE}
+r <- d/2
+block_area <-.02*pi*r^2
+```
+with the diameter of the disc of the sun at L1 being equal to `r format(d, nsmall=0, big.mark=',')` kilometers. Two percent of the area of a circle of that diameter is equal to `r format(block_area,nsmall=0, big.mark=',')` km^2^.
+
+## Percent Distance Expansion
+
+```{r, echo=FALSE}
+earth_d <-12742
+L1_earth_d <-12742*1.01
+L1_earth_r <-L1_earth_d/2
+block_area_v2 <-.02*pi*L1_earth_r^2
+```
+
+Conveniently, the L1 point is approximately 1% of the distance between the Earth and Sun. The diameter of Earth is frequently cited as 12,742 km. If we increase the size of the Earth by 1%, the diameter becomes `r format(12742*1.01, nsmall=0, big.mark=',')` km. This larger circle can be viewed as the size of the start of the "light cone" that emits from the disc of the sun at the L1 distance and hits the earth. Two percent of this light emitting surface from projecting Earth onto L1 is `r format(block_area_v2,nsmall=0, big.mark=',')` km^2^, a similar figure to our first method.
+
